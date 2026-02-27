@@ -1,0 +1,481 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* Blade Runner Cyberpunk Theme */
+@font-face {
+  font-family: 'Orbitron';
+  src: url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap');
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+  
+  /* Blade Runner neon colors */
+  --color-neon-cyan: var(--neon-cyan);
+  --color-neon-magenta: var(--neon-magenta);
+  --color-neon-orange: var(--neon-orange);
+  --color-neon-pink: var(--neon-pink);
+  --color-neon-blue: var(--neon-blue);
+  --color-neon-green: var(--neon-green);
+  --color-neon-yellow: var(--neon-yellow);
+  --color-neon-red: var(--neon-red);
+}
+
+:root {
+  --radius: 0.25rem;
+  
+  /* Blade Runner Dark Theme - Always dark */
+  --background: #0a0a0f;
+  --foreground: #e0e6ed;
+  --card: #0d1117;
+  --card-foreground: #e0e6ed;
+  --popover: #0d1117;
+  --popover-foreground: #e0e6ed;
+  --primary: #00d4ff;
+  --primary-foreground: #0a0a0f;
+  --secondary: #1a1a2e;
+  --secondary-foreground: #e0e6ed;
+  --muted: #16161a;
+  --muted-foreground: #6b7280;
+  --accent: #ff0080;
+  --accent-foreground: #ffffff;
+  --destructive: #ff3333;
+  --border: rgba(0, 212, 255, 0.15);
+  --input: rgba(0, 212, 255, 0.1);
+  --ring: #00d4ff;
+  
+  /* Neon accent colors */
+  --neon-cyan: #00d4ff;
+  --neon-magenta: #ff0080;
+  --neon-orange: #ff6b35;
+  --neon-pink: #ff1493;
+  --neon-blue: #0066ff;
+  --neon-green: #00ff88;
+  --neon-yellow: #ffd000;
+  --neon-red: #ff3333;
+  
+  /* Chart colors - Neon palette */
+  --chart-1: #00d4ff;
+  --chart-2: #ff0080;
+  --chart-3: #00ff88;
+  --chart-4: #ff6b35;
+  --chart-5: #ffd000;
+  
+  /* Sidebar */
+  --sidebar: #0d1117;
+  --sidebar-foreground: #e0e6ed;
+  --sidebar-primary: #00d4ff;
+  --sidebar-primary-foreground: #0a0a0f;
+  --sidebar-accent: #1a1a2e;
+  --sidebar-accent-foreground: #e0e6ed;
+  --sidebar-border: rgba(0, 212, 255, 0.15);
+  --sidebar-ring: #00d4ff;
+}
+
+.dark {
+  --background: #0a0a0f;
+  --foreground: #e0e6ed;
+  --card: #0d1117;
+  --card-foreground: #e0e6ed;
+  --popover: #0d1117;
+  --popover-foreground: #e0e6ed;
+  --primary: #00d4ff;
+  --primary-foreground: #0a0a0f;
+  --secondary: #1a1a2e;
+  --secondary-foreground: #e0e6ed;
+  --muted: #16161a;
+  --muted-foreground: #6b7280;
+  --accent: #ff0080;
+  --accent-foreground: #ffffff;
+  --destructive: #ff3333;
+  --border: rgba(0, 212, 255, 0.15);
+  --input: rgba(0, 212, 255, 0.1);
+  --ring: #00d4ff;
+  --chart-1: #00d4ff;
+  --chart-2: #ff0080;
+  --chart-3: #00ff88;
+  --chart-4: #ff6b35;
+  --chart-5: #ffd000;
+  --sidebar: #0d1117;
+  --sidebar-foreground: #e0e6ed;
+  --sidebar-primary: #00d4ff;
+  --sidebar-primary-foreground: #0a0a0f;
+  --sidebar-accent: #1a1a2e;
+  --sidebar-accent-foreground: #e0e6ed;
+  --sidebar-border: rgba(0, 212, 255, 0.15);
+  --sidebar-ring: #00d4ff;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  }
+}
+
+/* Blade Runner specific styles */
+@layer components {
+  /* Scanline overlay effect */
+  .scanlines {
+    position: relative;
+  }
+  
+  .scanlines::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 0, 0, 0.1) 2px,
+      rgba(0, 0, 0, 0.1) 4px
+    );
+    pointer-events: none;
+    z-index: 100;
+  }
+  
+  /* Neon glow effects */
+  .neon-glow-cyan {
+    box-shadow: 
+      0 0 5px rgba(0, 212, 255, 0.5),
+      0 0 10px rgba(0, 212, 255, 0.3),
+      0 0 20px rgba(0, 212, 255, 0.2),
+      inset 0 0 5px rgba(0, 212, 255, 0.1);
+  }
+  
+  .neon-glow-magenta {
+    box-shadow: 
+      0 0 5px rgba(255, 0, 128, 0.5),
+      0 0 10px rgba(255, 0, 128, 0.3),
+      0 0 20px rgba(255, 0, 128, 0.2),
+      inset 0 0 5px rgba(255, 0, 128, 0.1);
+  }
+  
+  .neon-glow-orange {
+    box-shadow: 
+      0 0 5px rgba(255, 107, 53, 0.5),
+      0 0 10px rgba(255, 107, 53, 0.3),
+      0 0 20px rgba(255, 107, 53, 0.2),
+      inset 0 0 5px rgba(255, 107, 53, 0.1);
+  }
+  
+  .neon-glow-green {
+    box-shadow: 
+      0 0 5px rgba(0, 255, 136, 0.5),
+      0 0 10px rgba(0, 255, 136, 0.3),
+      0 0 20px rgba(0, 255, 136, 0.2),
+      inset 0 0 5px rgba(0, 255, 136, 0.1);
+  }
+  
+  /* Text glow effects */
+  .text-glow-cyan {
+    text-shadow: 
+      0 0 5px rgba(0, 212, 255, 0.8),
+      0 0 10px rgba(0, 212, 255, 0.5),
+      0 0 20px rgba(0, 212, 255, 0.3);
+  }
+  
+  .text-glow-magenta {
+    text-shadow: 
+      0 0 5px rgba(255, 0, 128, 0.8),
+      0 0 10px rgba(255, 0, 128, 0.5),
+      0 0 20px rgba(255, 0, 128, 0.3);
+  }
+  
+  /* Cyber card with border glow */
+  .cyber-card {
+    background: linear-gradient(135deg, rgba(13, 17, 23, 0.95) 0%, rgba(10, 10, 15, 0.98) 100%);
+    border: 1px solid rgba(0, 212, 255, 0.2);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .cyber-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.5), transparent);
+  }
+  
+  .cyber-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 0, 128, 0.3), transparent);
+  }
+  
+  /* Grid background pattern */
+  .cyber-grid {
+    background-image: 
+      linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
+    background-size: 50px 50px;
+  }
+  
+  /* Animated pulse effect */
+  .pulse-neon {
+    animation: pulse-neon 2s ease-in-out infinite;
+  }
+  
+  @keyframes pulse-neon {
+    0%, 100% {
+      opacity: 1;
+      filter: brightness(1);
+    }
+    50% {
+      opacity: 0.8;
+      filter: brightness(1.2);
+    }
+  }
+  
+  /* Glitch effect for text */
+  .glitch {
+    position: relative;
+  }
+  
+  .glitch::before,
+  .glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .glitch::before {
+    animation: glitch-1 0.3s infinite linear alternate-reverse;
+    color: #ff0080;
+    clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
+  }
+  
+  .glitch::after {
+    animation: glitch-2 0.3s infinite linear alternate-reverse;
+    color: #00d4ff;
+    clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
+  }
+  
+  @keyframes glitch-1 {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-2px); }
+  }
+  
+  @keyframes glitch-2 {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(2px); }
+  }
+  
+  /* Status indicators */
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    animation: blink 1.5s ease-in-out infinite;
+  }
+  
+  .status-dot.online {
+    background: #00ff88;
+    box-shadow: 0 0 10px #00ff88;
+  }
+  
+  .status-dot.warning {
+    background: #ffd000;
+    box-shadow: 0 0 10px #ffd000;
+  }
+  
+  .status-dot.danger {
+    background: #ff3333;
+    box-shadow: 0 0 10px #ff3333;
+  }
+  
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+  
+  /* Holographic effect */
+  .holographic {
+    background: linear-gradient(
+      135deg,
+      rgba(0, 212, 255, 0.1) 0%,
+      rgba(255, 0, 128, 0.1) 25%,
+      rgba(0, 255, 136, 0.1) 50%,
+      rgba(255, 107, 53, 0.1) 75%,
+      rgba(0, 212, 255, 0.1) 100%
+    );
+    background-size: 400% 400%;
+    animation: holographic-shift 10s ease infinite;
+  }
+  
+  @keyframes holographic-shift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  
+  /* Corner decorations */
+  .corner-decoration {
+    position: relative;
+  }
+  
+  .corner-decoration::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    width: 20px;
+    height: 20px;
+    border-top: 2px solid #00d4ff;
+    border-left: 2px solid #00d4ff;
+  }
+  
+  .corner-decoration::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    right: -1px;
+    width: 20px;
+    height: 20px;
+    border-bottom: 2px solid #ff0080;
+    border-right: 2px solid #ff0080;
+  }
+  
+  /* Data stream animation */
+  .data-stream {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .data-stream::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(0, 212, 255, 0.1),
+      transparent
+    );
+    animation: data-stream 3s linear infinite;
+  }
+  
+  @keyframes data-stream {
+    0% { left: -100%; }
+    100% { left: 100%; }
+  }
+}
+
+/* Leaflet map dark theme overrides */
+.leaflet-container {
+  background: #0a0a0f !important;
+}
+
+.leaflet-tile {
+  filter: invert(1) hue-rotate(180deg) brightness(0.8) contrast(1.2) saturate(0.3);
+}
+
+.leaflet-control-zoom a {
+  background: rgba(13, 17, 23, 0.9) !important;
+  color: #00d4ff !important;
+  border: 1px solid rgba(0, 212, 255, 0.3) !important;
+}
+
+.leaflet-control-zoom a:hover {
+  background: rgba(0, 212, 255, 0.2) !important;
+}
+
+.leaflet-control-attribution {
+  background: rgba(10, 10, 15, 0.8) !important;
+  color: #6b7280 !important;
+}
+
+.leaflet-popup-content-wrapper {
+  background: rgba(13, 17, 23, 0.95) !important;
+  color: #e0e6ed !important;
+  border: 1px solid rgba(0, 212, 255, 0.3) !important;
+  border-radius: 4px !important;
+}
+
+.leaflet-popup-tip {
+  background: rgba(13, 17, 23, 0.95) !important;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0a0a0f;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 212, 255, 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 212, 255, 0.5);
+}
+
+/* Selection color */
+::selection {
+  background: rgba(0, 212, 255, 0.3);
+  color: #ffffff;
+}
