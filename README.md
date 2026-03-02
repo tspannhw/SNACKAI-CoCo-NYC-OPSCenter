@@ -2,6 +2,10 @@
 
 A high-tech, Blade Runner-style real-time monitoring dashboard for NYC infrastructure, built with Next.js 16, Snowflake, and Cortex AI.
 
+
+![dashboard](https://github.com/tspannhw/SNACKAI-CoCo-NYC-OPSCenter/blob/main/images/Gemini_Generated_Image_tr34mhtr34mhtr34_pixian_ai.png)
+
+
 ![Dashboard Preview](https://img.shields.io/badge/Status-Active-00ff88?style=flat-square)
 ![Next.js](https://img.shields.io/badge/Next.js-16.1.6-00d4ff?style=flat-square)
 ![Snowflake](https://img.shields.io/badge/Snowflake-Cortex-ff0080?style=flat-square)
