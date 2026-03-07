@@ -6,7 +6,7 @@
 set -e
 
 APP_NAME="NYC Operations Command Center"
-PORT=3000
+PORT=4000
 PID_FILE=".server.pid"
 
 # Colors

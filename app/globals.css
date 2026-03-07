@@ -455,6 +455,18 @@
   background: rgba(13, 17, 23, 0.95) !important;
 }
 
+/* Leaflet tooltip styles for hover */
+.leaflet-tooltip.cyber-tooltip {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.leaflet-tooltip.cyber-tooltip::before {
+  display: none !important;
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;

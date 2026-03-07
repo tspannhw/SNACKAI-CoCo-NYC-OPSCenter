@@ -88,11 +88,14 @@ export interface MTAData {
   RECORDEDATTIME: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type MapMarkerDetails = Record<string, any>;
+
 export type MapMarker = {
   id: string;
   lat: number;
   lng: number;
   type: 'camera' | 'weather' | 'traffic' | 'air' | 'thermal' | 'mta';
   label: string;
-  details?: unknown;
+  details?: MapMarkerDetails;
 };

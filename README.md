@@ -22,7 +22,7 @@ npm run test:auth
 # 4. Start development server
 npm run dev
 
-# 5. Open http://localhost:3000
+# 5. Open http://localhost:4000
 ```
 
 ## Demo Walkthrough
@@ -84,7 +84,7 @@ Summary:
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) and explore:
+Open [http://localhost:4000](http://localhost:4000) and explore:
 
 | Tab | Features |
 |-----|----------|

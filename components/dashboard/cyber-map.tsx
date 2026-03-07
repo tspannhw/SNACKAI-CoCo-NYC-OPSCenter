@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useMemo } from "react";
+import React, { useEffect, useRef, useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -14,15 +14,7 @@ import {
 import { MapPin, Layers, ZoomIn, ZoomOut } from "lucide-react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-
-interface MapMarker {
-  id: string;
-  lat: number;
-  lng: number;
-  type: "camera" | "weather" | "traffic" | "air" | "thermal" | "mta";
-  label: string;
-  details?: unknown;
-}
+import type { MapMarker, MapMarkerDetails } from "./types";
 
 interface CyberMapProps {
   markers: MapMarker[];
@@ -67,6 +59,96 @@ function createCustomIcon(type: string) {
     iconSize: [12, 12],
     iconAnchor: [6, 6],
   });
+}
+
+function buildTooltipContent(marker: MapMarker): string {
+  const color = markerColors[marker.type] || "#00d4ff";
+  let detailsHtml = "";
+  
+  // Build details section if details exist
+  if (marker.details && typeof marker.details === "object") {
+    const details = marker.details;
+    const detailLines: string[] = [];
+    
+    // Extract key information based on marker type
+    if (marker.type === "weather") {
+      if (details.temperature !== undefined) detailLines.push(`Temp: ${details.temperature}°F`);
+      if (details.humidity !== undefined) detailLines.push(`Humidity: ${details.humidity}%`);
+      if (details.conditions) detailLines.push(`${details.conditions}`);
+    } else if (marker.type === "air") {
+      if (details.aqi !== undefined) detailLines.push(`AQI: ${details.aqi}`);
+      if (details.pm25 !== undefined) detailLines.push(`PM2.5: ${details.pm25}`);
+      if (details.status) detailLines.push(`Status: ${details.status}`);
+    } else if (marker.type === "traffic") {
+      if (details.status) detailLines.push(`Status: ${details.status}`);
+      if (details.severity) detailLines.push(`Severity: ${details.severity}`);
+      if (details.description) detailLines.push(`${String(details.description).substring(0, 50)}`);
+    } else if (marker.type === "thermal") {
+      if (details.temperature !== undefined) detailLines.push(`Temp: ${details.temperature}°F`);
+      if (details.status) detailLines.push(`Status: ${details.status}`);
+    } else if (marker.type === "mta") {
+      if (details.route) detailLines.push(`Route: ${details.route}`);
+      if (details.direction) detailLines.push(`Dir: ${details.direction}`);
+      if (details.nextStop) detailLines.push(`Next: ${details.nextStop}`);
+    } else if (marker.type === "camera") {
+      if (details.status) detailLines.push(`Status: ${details.status}`);
+      if (details.location) detailLines.push(`${details.location}`);
+    }
+    
+    // Add any other non-standard details (limit to first 3)
+    if (detailLines.length === 0) {
+      Object.entries(details).slice(0, 3).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && key !== "lat" && key !== "lng" && key !== "id") {
+          detailLines.push(`${key}: ${String(value).substring(0, 30)}`);
+        }
+      });
+    }
+    
+    if (detailLines.length > 0) {
+      detailsHtml = `<div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid ${color}40;">
+        ${detailLines.map(line => `<div style="color: #9ca3af; font-size: 9px;">${line}</div>`).join("")}
+      </div>`;
+    }
+  }
+  
+  return `<div style="
+    background: rgba(13, 17, 23, 0.98);
+    color: #e0e6ed;
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-family: monospace;
+    font-size: 11px;
+    min-width: 140px;
+    max-width: 220px;
+    border: 1px solid ${color}50;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5), 0 0 15px ${color}30;
+  ">
+    <div style="color: ${color}; font-weight: bold; margin-bottom: 2px;">
+      ${marker.label}
+    </div>
+    <div style="color: #6b7280; text-transform: uppercase; font-size: 9px; letter-spacing: 0.5px;">
+      ${markerLabels[marker.type]}
+    </div>
+    <div style="color: #4b5563; font-size: 8px; margin-top: 4px;">
+      ${marker.lat.toFixed(4)}, ${marker.lng.toFixed(4)}
+    </div>
+    ${detailsHtml}
+  </div>`;
+}
+
+function renderDetails(details: MapMarkerDetails): React.ReactNode[] {
+  return Object.entries(details)
+    .filter(([, value]) => value !== undefined && value !== null)
+    .map(([key, value]) => (
+      <div key={key} className="flex justify-between items-start py-1 border-b border-white/5">
+        <span className="text-[10px] text-muted-foreground capitalize">
+          {key.replace(/_/g, " ")}
+        </span>
+        <span className="text-[10px] text-foreground/90 font-mono text-right max-w-[60%] break-words">
+          {typeof value === "object" ? JSON.stringify(value) : String(value)}
+        </span>
+      </div>
+    ));
 }
 
 export function CyberMap({
@@ -142,27 +224,14 @@ export function CyberMap({
         icon: createCustomIcon(marker.type),
       });
 
-      leafletMarker.bindPopup(
-        `<div style="
-          background: rgba(13, 17, 23, 0.95);
-          color: #e0e6ed;
-          padding: 8px 12px;
-          border-radius: 4px;
-          font-family: monospace;
-          font-size: 11px;
-          min-width: 150px;
-        ">
-          <div style="color: ${markerColors[marker.type]}; font-weight: bold; margin-bottom: 4px;">
-            ${marker.label}
-          </div>
-          <div style="color: #6b7280; text-transform: uppercase; font-size: 9px;">
-            ${markerLabels[marker.type]}
-          </div>
-        </div>`,
-        {
-          className: "cyber-popup",
-        }
-      );
+      // Tooltip on hover - shows point information
+      const tooltipContent = buildTooltipContent(marker);
+      leafletMarker.bindTooltip(tooltipContent, {
+        className: "cyber-tooltip",
+        direction: "top",
+        offset: [0, -8],
+        opacity: 1,
+      });
 
       leafletMarker.on("click", () => {
         setSelectedMarker(marker);
@@ -280,26 +349,85 @@ export function CyberMap({
           </div>
         </div>
 
-        {/* Selected marker info */}
+        {/* Selected marker detail panel */}
         {selectedMarker && (
-          <div className="absolute top-4 left-4 bg-[#0d1117]/95 border border-[#00d4ff]/30 rounded p-3 z-[1000] max-w-[200px]">
-            <div
-              className="text-xs font-bold mb-1"
-              style={{ color: markerColors[selectedMarker.type] }}
-            >
-              {selectedMarker.label}
+          <div 
+            className="absolute inset-0 bg-[#0d1117]/98 z-[1001] flex flex-col"
+            style={{ backdropFilter: "blur(4px)" }}
+          >
+            {/* Header with back button */}
+            <div className="flex items-center gap-3 p-4 border-b border-[#00d4ff]/20">
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-8 px-3 bg-[#00d4ff]/10 border-[#00d4ff]/30 hover:bg-[#00d4ff]/20 text-[#00d4ff]"
+                onClick={() => setSelectedMarker(null)}
+              >
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Back to Map
+              </Button>
+              <div className="flex-1">
+                <div
+                  className="text-sm font-bold"
+                  style={{ color: markerColors[selectedMarker.type] }}
+                >
+                  {selectedMarker.label}
+                </div>
+                <div className="text-[10px] text-muted-foreground uppercase tracking-wider">
+                  {markerLabels[selectedMarker.type]}
+                </div>
+              </div>
+              <div
+                className="w-3 h-3 rounded-full"
+                style={{
+                  backgroundColor: markerColors[selectedMarker.type],
+                  boxShadow: `0 0 10px ${markerColors[selectedMarker.type]}`,
+                }}
+              />
             </div>
-            <div className="text-[10px] text-muted-foreground uppercase">
-              {markerLabels[selectedMarker.type]}
+            
+            {/* Detail content */}
+            <div className="flex-1 p-4 overflow-auto">
+              {/* Location */}
+              <div className="mb-4">
+                <div className="text-[9px] text-muted-foreground uppercase tracking-wider mb-1">Location</div>
+                <div className="text-xs font-mono text-[#00d4ff]">
+                  {selectedMarker.lat.toFixed(6)}, {selectedMarker.lng.toFixed(6)}
+                </div>
+              </div>
+              
+              {/* ID */}
+              <div className="mb-4">
+                <div className="text-[9px] text-muted-foreground uppercase tracking-wider mb-1">ID</div>
+                <div className="text-xs font-mono text-foreground/80">
+                  {selectedMarker.id}
+                </div>
+              </div>
+              
+              {/* Details */}
+              {selectedMarker.details && (
+                <div>
+                  <div className="text-[9px] text-muted-foreground uppercase tracking-wider mb-2">Details</div>
+                  <div className="space-y-2">
+                    {renderDetails(selectedMarker.details)}
+                  </div>
+                </div>
+              )}
             </div>
-            <Button
-              size="sm"
-              variant="ghost"
-              className="absolute top-1 right-1 h-5 w-5 p-0 text-muted-foreground hover:text-foreground"
-              onClick={() => setSelectedMarker(null)}
-            >
-              x
-            </Button>
+            
+            {/* Footer */}
+            <div className="p-3 border-t border-[#00d4ff]/20 flex justify-center">
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-8 px-4 bg-transparent border-[#00d4ff]/30 hover:bg-[#00d4ff]/20 text-[#00d4ff] text-xs"
+                onClick={() => setSelectedMarker(null)}
+              >
+                Close & Return to Map
+              </Button>
+            </div>
           </div>
         )}
       </CardContent>

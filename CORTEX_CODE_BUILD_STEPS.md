@@ -190,7 +190,7 @@ npm start
 docker build -t nyc-ops-center .
 
 # Docker run
-docker run -p 3000:3000 nyc-ops-center
+docker run -p 4000:4000 nyc-ops-center
 ```
 
 ---
