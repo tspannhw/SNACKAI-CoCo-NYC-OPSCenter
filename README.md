@@ -1,10 +1,34 @@
-# NYC Operations Command Center Dashboard
+# NYC Operations Command Center
 
-A high-tech, Blade Runner-style real-time monitoring dashboard for NYC infrastructure, built with Next.js 16, Snowflake, and Cortex AI.
+A real-time infrastructure monitoring dashboard for New York City operations, built with Next.js and Snowflake.
 
-![Dashboard Preview](https://img.shields.io/badge/Status-Active-00ff88?style=flat-square)
-![Next.js](https://img.shields.io/badge/Next.js-16.1.6-00d4ff?style=flat-square)
-![Snowflake](https://img.shields.io/badge/Snowflake-Cortex-ff0080?style=flat-square)
+## Features
+
+- **Real-Time Monitoring**: Live data from traffic cameras, weather stations, air quality sensors, MTA buses, and thermal sensors
+- **Interactive Map**: Leaflet-based map with colour-coded markers for all data sources
+- **AI-Powered Chat**: Natural language queries via Snowflake Cortex Agent (`DEMO.DEMO.NYC_OPS_CENTER_AGENT`) with automatic fallback to `CORTEX.COMPLETE`
+- **Data Visualization**: Recharts-powered charts, stat cards, and data tables with a cyberpunk/Blade Runner aesthetic
+- **Export Functionality**: Download any dataset as CSV or JSON
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Framework | Next.js 16 (App Router) |
+| Language | TypeScript 5 |
+| Styling | Tailwind CSS 4, shadcn/ui (Radix UI) |
+| Charts | Recharts |
+| Maps | Leaflet + React-Leaflet |
+| Data Warehouse | Snowflake |
+| AI | Snowflake Cortex Agent / Cortex Analyst |
+| Validation | Zod |
+| Testing | Jest + ts-jest |
+
+## Prerequisites
+
+- Node.js 18+
+- A Snowflake account with the semantic views listed under [Data Sources](#data-sources)
+- One of the [authentication methods](#authentication) configured
 
 ## Quick Start
 
@@ -12,271 +36,149 @@ A high-tech, Blade Runner-style real-time monitoring dashboard for NYC infrastru
 # 1. Install dependencies
 npm install
 
-# 2. Configure authentication (choose one method)
-cp .env.example .env.local
-# Edit .env.local with your credentials
+# 2. Create environment file
+cp .env.example .env.local   # or create .env.local manually
 
-# 3. Test your connection
-npm run test:auth
+# 3. Edit .env.local (see Authentication section below)
 
-# 4. Start development server
+# 4. Start the development server
 npm run dev
-
-# 5. Open http://localhost:4000
+# → http://localhost:4000
 ```
-
-## Demo Walkthrough
-
-### Step 1: Generate a PAT (Recommended for Development)
-
-1. Log into [Snowsight](https://app.snowflake.com)
-2. Click your username (bottom-left) → **My Profile**
-3. Go to **Programmatic Access Tokens**
-4. Click **+ Generate New Token**
-5. Copy the token immediately (shown only once!)
-
-### Step 2: Configure Environment
-
-```bash
-# Create .env.local
-cat > .env.local << 'EOF'
-SNOWFLAKE_ACCOUNT=your-account-identifier
-SNOWFLAKE_USER=your-username
-SNOWFLAKE_PAT=paste-your-token-here
-SNOWFLAKE_WAREHOUSE=COMPUTE_WH
-SNOWFLAKE_DATABASE=DEMO
-SNOWFLAKE_SCHEMA=DEMO
-EOF
-```
-
-### Step 3: Verify Authentication
-
-```bash
-npm run test:auth
-```
-
-Expected output:
-```
-╔══════════════════════════════════════════════════════════════╗
-║     NYC Operations Command Center - Authentication Test      ║
-╚══════════════════════════════════════════════════════════════╝
-
-Environment Configuration:
-─────────────────────────────────────────────────────────────────
-  Account:   your-account
-  User:      your-username
-  ...
-
-Testing PAT...
-  ✓ Success: YOUR_USER
-
-Summary:
-  ✓ Successful: 1
-  ✗ Failed:     0
-  ⊘ Skipped:    4
-
-✓ At least one authentication method works!
-```
-
-### Step 4: Launch the Dashboard
-
-```bash
-npm run dev
-```
-
-Open [http://localhost:4000](http://localhost:4000) and explore:
-
-| Tab | Features |
-|-----|----------|
-| **Overview** | Stats cards, interactive map, AI chat, gauges |
-| **Traffic** | Traffic events, camera feeds, incident breakdown |
-| **Weather** | Weather stations, air quality monitors |
-| **Sensors** | Thermal sensor data, time series charts |
-| **Transit** | MTA bus positions, route distribution |
-
-### Step 5: Try the AI Chat
-
-In the Overview tab, use the Cortex Analyst chat to ask questions:
-- "How many cameras are active?"
-- "What's the average temperature today?"
-- "Show me traffic events by severity"
-- "Which bus routes have the most vehicles?"
-
----
-
-## Features
-
-### Data Sources (6 Semantic Views)
-| View | Description |
-|------|-------------|
-| `NYC_CAMERA_SEMANTIC_VIEW` | Live camera feeds, locations, status |
-| `NYC_WEATHER_SEMANTIC_VIEW` | Temperature, humidity, wind, visibility |
-| `NYC_AIR_QUALITY_SEMANTIC_VIEW` | AQI readings by pollutant |
-| `NYC_TRAFFIC_EVENTS_SEMANTIC_VIEW` | Incidents, construction, severity |
-| `THERMAL_SENSOR_SEMANTIC_VIEW` | IoT sensors with CO2, VOC, temperature |
-| `SVMTA` | Real-time bus positions, routes, ETAs |
-
-### Visualizations
-- **Interactive Map** - Leaflet-based dark theme map with filterable markers
-- **Charts** - Area, bar, pie, line, and radar charts with neon glow effects
-- **Gauges** - Environmental monitors with threshold-based color coding
-- **Data Tables** - Sortable, searchable tables with pagination and export
-
-### Key Capabilities
-- **Cortex Analyst Chat** - Natural language queries using Snowflake Cortex AI
-- **Data Export** - Download any table as CSV or JSON
-- **Real-time Updates** - Auto-refresh every 60 seconds
-- **Responsive Design** - Works on desktop and tablet
-
----
 
 ## Authentication
 
-See [AUTHENTICATION.md](./AUTHENTICATION.md) for complete documentation.
+The app detects the best available method in this priority order:
 
-### Quick Reference
+| Priority | Method | Env Vars Required |
+|---|---|---|
+| 1 | **OAuth (SPCS)** | Auto-detected from `/snowflake/session/token` |
+| 2 | **Key-Pair (JWT)** | `SNOWFLAKE_PRIVATE_KEY` or `SNOWFLAKE_PRIVATE_KEY_PATH` + `SNOWFLAKE_USER` |
+| 3 | **PAT** | `SNOWFLAKE_PAT` |
+| 4 | **Password** | `SNOWFLAKE_PASSWORD` |
+| 5 | **Browser SSO** | *(fallback – not usable in server routes)* |
 
-| Method | Environment Variables | Best For |
-|--------|----------------------|----------|
-| **OAuth** | Auto-detected | SPCS deployment |
-| **Key-Pair** | `SNOWFLAKE_PRIVATE_KEY_PATH` | Production |
-| **PAT** | `SNOWFLAKE_PAT` | Development |
-| **Password** | `SNOWFLAKE_PASSWORD` | Simple testing |
+### Example `.env.local`
 
-### Test Your Configuration
+```env
+SNOWFLAKE_ACCOUNT=myorg-myaccount
+SNOWFLAKE_USER=my_user
+SNOWFLAKE_WAREHOUSE=COMPUTE_WH
+SNOWFLAKE_DATABASE=DEMO
+SNOWFLAKE_SCHEMA=DEMO
 
-```bash
-npm run test:auth
+# Choose ONE of the following:
+SNOWFLAKE_PAT=your-programmatic-access-token
+# SNOWFLAKE_PRIVATE_KEY_PATH=/path/to/rsa_key.p8
+# SNOWFLAKE_PASSWORD=your-password
 ```
 
----
-
-## Tech Stack
-
-| Component | Technology |
-|-----------|------------|
-| Framework | Next.js 16 (App Router) |
-| UI Components | shadcn/ui + Tailwind CSS |
-| Charts | Recharts |
-| Maps | Leaflet + react-leaflet |
-| Database | Snowflake (snowflake-sdk) |
-| AI | Snowflake Cortex Analyst |
-
----
-
-## Design
-
-Cyberpunk/Blade Runner aesthetic featuring:
-- Dark background (#0a0a0f) with cyber grid pattern
-- Neon accent colors: Cyan (#00d4ff), Magenta (#ff0080), Orange (#ff6b35), Green (#00ff88)
-- Glowing effects, scanlines, and holographic animations
-- Corner decorations and data stream effects
-- Custom dark theme for Leaflet maps
-
----
+See [`AUTHENTICATION.md`](./AUTHENTICATION.md) for detailed setup instructions for each method.
 
 ## Project Structure
 
 ```
 nyc-ops-center/
+├── __tests__/                 # Jest unit tests
+│   ├── utils.test.ts          # cn() utility tests
+│   ├── validations.test.ts    # Zod schema tests
+│   └── export.test.ts         # Export API route tests
 ├── app/
-│   ├── api/                    # API routes
-│   │   ├── air-quality/route.ts
-│   │   ├── analyst/route.ts    # Cortex AI chat
-│   │   ├── cameras/route.ts
-│   │   ├── export/route.ts     # CSV/JSON export
-│   │   ├── mta/route.ts
-│   │   ├── thermal/route.ts
-│   │   ├── traffic/route.ts
-│   │   └── weather/route.ts
-│   ├── globals.css             # Blade Runner theme
+│   ├── api/
+│   │   ├── air-quality/route.ts   # GET – air quality readings
+│   │   ├── analyst/route.ts       # POST – Cortex Agent / AI chat
+│   │   ├── cameras/route.ts       # GET – traffic camera data
+│   │   ├── export/route.ts        # POST – CSV / JSON export
+│   │   ├── mta/route.ts           # GET – MTA real-time bus positions
+│   │   ├── thermal/route.ts       # GET – IoT thermal sensor readings
+│   │   ├── traffic/route.ts       # GET – traffic events & incidents
+│   │   └── weather/route.ts       # GET – weather station data
 │   ├── layout.tsx
-│   └── page.tsx                # Main dashboard
+│   └── page.tsx                   # Main dashboard
 ├── components/
 │   ├── dashboard/
-│   │   ├── ai-chat.tsx         # Cortex Analyst panel
-│   │   ├── badges.tsx          # Severity/AQI badges
-│   │   ├── charts.tsx          # Neon chart components
-│   │   ├── cyber-map.tsx       # Interactive map
-│   │   ├── data-table.tsx      # Tables with export
-│   │   ├── stat-card.tsx       # Metric cards
-│   │   └── types.ts            # TypeScript interfaces
-│   └── ui/                     # shadcn/ui components
+│   │   ├── ai-chat.tsx            # Cortex Agent chat panel
+│   │   ├── badges.tsx             # Severity / status badges
+│   │   ├── charts.tsx             # Recharts wrappers
+│   │   ├── cyber-map.tsx          # Leaflet map with marker layers
+│   │   ├── data-table.tsx         # Sortable table with export button
+│   │   ├── stat-card.tsx          # KPI stat cards
+│   │   └── types.ts               # Shared TypeScript interfaces
+│   └── ui/                        # shadcn/ui primitives
 ├── lib/
-│   ├── snowflake.ts            # Snowflake connection
-│   └── utils.ts
+│   ├── snowflake.ts               # Connection pool & query helpers
+│   ├── utils.ts                   # cn() className utility
+│   └── validations.ts             # Zod schemas for all API data shapes
 ├── scripts/
-│   └── test-auth.ts            # Authentication test
-├── AUTHENTICATION.md           # Auth documentation
-├── Dockerfile
-└── package.json
+│   └── test-auth.ts               # Manual auth smoke-test script
+├── Dockerfile                     # Container image
+├── jest.config.ts                 # Jest / ts-jest configuration
+└── next.config.ts
 ```
 
----
+## API Endpoints
 
-## API Caching
+| Endpoint | Method | Cache | Description |
+|---|---|---|---|
+| `/api/cameras` | GET | 30 s | Traffic camera feeds |
+| `/api/traffic` | GET | 30 s | Traffic events and incidents |
+| `/api/mta` | GET | 15 s | MTA bus real-time positions |
+| `/api/thermal` | GET | 30 s | IoT thermal/environmental sensors |
+| `/api/weather` | GET | 60 s | Weather station current conditions |
+| `/api/air-quality` | GET | 60 s | EPA air quality index readings |
+| `/api/analyst` | POST | — | AI chat – sends question to Cortex Agent |
+| `/api/export` | POST | — | Export a data array as CSV or JSON |
 
-| Endpoint | Cache Duration | Reason |
-|----------|---------------|--------|
-| `/api/mta` | 15s | Most dynamic (bus positions) |
-| `/api/traffic` | 30s | Medium update frequency |
-| `/api/cameras` | 30s | Medium update frequency |
-| `/api/thermal` | 30s | Sensor readings |
-| `/api/weather` | 60s | Slower updates |
-| `/api/air-quality` | 60s | Slower updates |
+### `/api/analyst` Request Body
 
----
-
-## SPCS Deployment
-
-This app is ready for deployment to Snowpark Container Services:
-
-1. A `Dockerfile` is included for containerization
-2. The app auto-detects OAuth tokens at `/snowflake/session/token`
-3. Use the `deploy-to-spcs` Cortex Code skill for guided deployment
-
-```bash
-# Build container
-docker build -t nyc-ops-center .
-
-# Deploy to SPCS (use Cortex Code skill)
-/skill deploy-to-spcs
+```json
+{ "question": "How many cameras are currently blocked?" }
 ```
 
----
+### `/api/export` Request Body
 
-## Troubleshooting
+```json
+{
+  "data": [{ "id": 1, "name": "FDR Camera" }],
+  "filename": "cameras",
+  "format": "csv"
+}
+```
 
-### "Cannot read properties of null (reading 'proofKey')"
-External browser auth doesn't work in server context. Configure PAT, key-pair, or password.
+## Data Sources (Snowflake)
 
-### "Programmatic access token is invalid"
-Token may be expired or username doesn't match. Generate a new PAT.
-
-### Dashboard shows "INITIALIZING SYSTEMS" forever
-Check browser console for errors. Run `npm run test:auth` to verify connectivity.
-
-### API routes return 500 errors
-Check server logs (`npm run dev` terminal). Likely authentication issue.
-
----
+| Semantic View / Table | Used By |
+|---|---|
+| `DEMO.DEMO.NYC_CAMERA_SEMANTIC_VIEW` | `/api/cameras` |
+| `DEMO.DEMO.NYC_TRAFFIC_EVENTS_SEMANTIC_VIEW` | `/api/traffic` |
+| `DEMO.DEMO.NYC_WEATHER_SEMANTIC_VIEW` | `/api/weather` |
+| `DEMO.DEMO.NYC_AIR_QUALITY_SEMANTIC_VIEW` | `/api/air-quality` |
+| `DEMO.DEMO.THERMAL_SENSOR_SEMANTIC_VIEW` | `/api/thermal` |
+| `DEMO.DEMO.SVMTA` | `/api/mta` |
+| `DEMO.DEMO.NYC_OPS_CENTER_AGENT` | `/api/analyst` |
 
 ## Scripts
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Start development server |
-| `npm run build` | Build for production |
-| `npm run start` | Start production server |
-| `npm run lint` | Run ESLint |
-| `npm run test:auth` | Test Snowflake authentication |
+```bash
+npm run dev        # Development server on :4000
+npm run build      # Production build
+npm run start      # Production server on :4000
+npm run lint       # ESLint
+npm test           # Jest unit tests
+npm run test:auth  # Manual Snowflake auth smoke-test
+```
 
----
+## Docker
+
+```bash
+docker build -t nyc-ops-center .
+docker run -p 4000:4000 \
+  -e SNOWFLAKE_ACCOUNT=myorg-myaccount \
+  -e SNOWFLAKE_USER=my_user \
+  -e SNOWFLAKE_PAT=... \
+  nyc-ops-center
+```
 
 ## License
 
-Internal use only.
-
----
-
-Built with [Cortex Code](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code)
+Private – All rights reserved

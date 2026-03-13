@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { query } from "@/lib/snowflake";
+import { analystRequestSchema, validateRequest } from "@/lib/validations";
 import crypto from "crypto";
 import fs from "fs";
 
@@ -237,12 +238,16 @@ export async function POST(request: NextRequest) {
   const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);
   
   try {
-    const { question } = await request.json();
-
-    if (!question) {
+    const body = await request.json();
+    
+    // Validate request body
+    const validation = validateRequest(analystRequestSchema, body);
+    if (!validation.success) {
       clearTimeout(timeoutId);
-      return NextResponse.json({ error: "Question is required" }, { status: 400 });
+      return NextResponse.json({ error: validation.error }, { status: 400 });
     }
+    
+    const { question } = validation.data;
 
     let answer: string;
     let sql: string | null = null;
